@@ -1,0 +1,84 @@
+// Version: 1.0.0
+type Category__576616766 =
+  {#accessories; #books; #clothing; #documents; #electronics; #keys; #other};
+type ClaimId__263834452 = Nat;
+type ClaimStatus__691400681 = {#approved; #pending; #rejected};
+type Claim__272918955 =
+  {
+    claimantId : UserId__158757552;
+    createdAt : Timestamp__301639476;
+    id : ClaimId__263834452;
+    itemId : ItemId__833640393;
+    message : Text;
+    status : ClaimStatus__691400681
+  };
+type ItemId__833640393 = Nat;
+type ItemStatus__226049467 = {#matched; #open; #resolved};
+type ItemType__584303286 = {#found; #lost};
+type Item__531123396 =
+  {
+    category : Category__576616766;
+    createdAt : Timestamp__301639476;
+    date : Timestamp__301639476;
+    description : Text;
+    id : ItemId__833640393;
+    imageUrl : ?Text;
+    itemType : ItemType__584303286;
+    location : Text;
+    name : Text;
+    status : ItemStatus__226049467;
+    userId : UserId__158757552
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type NotificationId__307495059 = Nat;
+type NotificationType__908192046 =
+  {#claim_approved; #claim_received; #claim_rejected; #match_found};
+type Notification__264708741 =
+  {
+    createdAt : Timestamp__301639476;
+    id : NotificationId__307495059;
+    itemId : ?ItemId__833640393;
+    message : Text;
+    notificationType : NotificationType__908192046;
+    read : Bool;
+    userId : UserId__158757552
+  };
+type Timestamp__301639476 = Int;
+type UserId__158757552 = Principal;
+type User__98118558 =
+  {
+    createdAt : Timestamp__301639476;
+    var email : Text;
+    id : UserId__158757552;
+    var name : Text
+  };
+actor {
+  stable claims :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Claim__272918955]];
+      var elementIndex : Nat__490723111
+    };
+  stable items :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Item__531123396]];
+      var elementIndex : Nat__490723111
+    };
+  stable nextClaimId : {var value : Nat};
+  stable nextItemId : {var value : Nat};
+  stable nextNotifId : {var value : Nat};
+  stable notifications :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Notification__264708741]];
+      var elementIndex : Nat__490723111
+    };
+  stable users :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?User__98118558]];
+      var elementIndex : Nat__490723111
+    }
+};

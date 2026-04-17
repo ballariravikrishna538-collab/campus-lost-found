@@ -1,0 +1,139 @@
+type UserProfile = 
+ record {
+   createdAt: Timestamp;
+   email: text;
+   id: UserId;
+   name: text;
+ };
+type UserId = principal;
+type UpdateUserRequest = 
+ record {
+   email: opt text;
+   name: opt text;
+ };
+type UpdateItemRequest = 
+ record {
+   description: opt text;
+   id: ItemId;
+   imageUrl: opt text;
+   location: opt text;
+   name: opt text;
+ };
+type Timestamp = int;
+type NotificationType = 
+ variant {
+   claim_approved;
+   claim_received;
+   claim_rejected;
+   match_found;
+ };
+type NotificationId = nat;
+type Notification = 
+ record {
+   createdAt: Timestamp;
+   id: NotificationId;
+   itemId: opt ItemId;
+   message: text;
+   notificationType: NotificationType;
+   read: bool;
+   userId: UserId;
+ };
+type ItemsPage = 
+ record {
+   items: vec Item;
+   limit: nat;
+   offset: nat;
+   total: nat;
+ };
+type ItemType = 
+ variant {
+   found;
+   lost;
+ };
+type ItemStatus = 
+ variant {
+   matched;
+   open;
+   resolved;
+ };
+type ItemId = nat;
+type Item = 
+ record {
+   category: Category;
+   createdAt: Timestamp;
+   date: Timestamp;
+   description: text;
+   id: ItemId;
+   imageUrl: opt text;
+   itemType: ItemType;
+   location: text;
+   name: text;
+   status: ItemStatus;
+   userId: UserId;
+ };
+type CreateItemRequest = 
+ record {
+   category: Category;
+   date: Timestamp;
+   description: text;
+   imageUrl: opt text;
+   itemType: ItemType;
+   location: text;
+   name: text;
+ };
+type CreateClaimRequest = 
+ record {
+   itemId: ItemId;
+   message: text;
+ };
+type ClaimStatus = 
+ variant {
+   approved;
+   pending;
+   rejected;
+ };
+type ClaimId = nat;
+type Claim = 
+ record {
+   claimantId: UserId;
+   createdAt: Timestamp;
+   id: ClaimId;
+   itemId: ItemId;
+   message: text;
+   status: ClaimStatus;
+ };
+type Category = 
+ variant {
+   accessories;
+   books;
+   clothing;
+   documents;
+   electronics;
+   keys;
+   other;
+ };
+service : {
+  approveClaim: (claimId: ClaimId) -> (bool);
+  createItem: (request: CreateItemRequest) -> (Item);
+  deleteItem: (id: ItemId) -> (bool);
+  getItem: (id: ItemId) -> (opt Item) query;
+  getMatchSuggestions: (id: ItemId) -> (vec Item) query;
+  getMyNotifications: () -> (vec Notification) query;
+  getMyProfile: () -> (opt UserProfile) query;
+  getUserProfile: (userId: UserId) -> (opt UserProfile) query;
+  listAllItems: (offset: nat, limit: nat) -> (ItemsPage) query;
+  listClaimsByItem: (itemId: ItemId) -> (vec Claim) query;
+  listItemsByCategory: (category: Category, offset: nat, limit: nat) ->
+   (ItemsPage) query;
+  listItemsByType: (itemType: ItemType, offset: nat, limit: nat) ->
+   (ItemsPage) query;
+  listItemsByUser: (userId: UserId) -> (vec Item) query;
+  listMyClaims: () -> (vec Claim) query;
+  markNotificationRead: (id: NotificationId) -> (bool);
+  registerUser: (name: text, email: text) -> (UserProfile);
+  rejectClaim: (claimId: ClaimId) -> (bool);
+  resolveItem: (id: ItemId) -> (bool);
+  submitClaim: (request: CreateClaimRequest) -> (Claim);
+  updateItem: (request: UpdateItemRequest) -> (opt Item);
+  updateMyProfile: (request: UpdateUserRequest) -> (opt UserProfile);
+}
